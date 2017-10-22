@@ -23,8 +23,8 @@
         <el-row :gutter="20">
             <el-col :span="4" :offset="9">
                 <el-form ref="form" :model="form" label-width="80px">
-                    <el-form-item label="用户名">
-                        <el-input v-model="loginInfo.name"></el-input>
+                    <el-form-item>
+                        <el-input v-model="loginInfo.name" placeholder="请输入用户名"></el-input>
                     </el-form-item>
                 </el-form>
             </el-col>
@@ -34,8 +34,8 @@
          <el-row :gutter="20">
             <el-col :span="4" :offset="9">
                 <el-form ref="form" :model="form" label-width="80px">
-                    <el-form-item label="密码">
-                        <el-input type="password" v-model="loginInfo.password"></el-input>
+                    <el-form-item>
+                        <el-input type="password" v-model="loginInfo.password"  placeholder="请输入密码"></el-input>
                     </el-form-item>
                 </el-form>
             </el-col>
