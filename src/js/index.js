@@ -5,7 +5,8 @@ var app = new Vue({
         loginInfo: {
             name: '',
             password: ''
-          }
+          },
+        activeName: 'loginTab'
     },
     methods: {
         login() {
@@ -22,6 +23,10 @@ var app = new Vue({
             message: '这是一条成功的注册消息',
             type: 'success'
           });
-        }
+        },
+
+        switchTab(tab, event) {
+            console.log(tab, event);
+          }
       }
 })
