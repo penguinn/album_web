@@ -1,8 +1,9 @@
-var domain = "/campus-server";
+var domain = '';
 var app = new Vue({
     el: '#app',
+    authCodeImg: '',
     data: {
-        message: 'Hello Campus',
+        message: 'Hello Album',
         registerInfo: {
             loginName: '',
             password: '',
@@ -11,7 +12,9 @@ var app = new Vue({
         loginInfo: {
             loginName: '',
             password: ''
-          },
+        },
+    },
+    mounted: function () {
     },
     methods: {
         errorNotify(title,message) {
@@ -35,7 +38,7 @@ var app = new Vue({
                 type: 'warning'
             });
         },
-
+        
         switchLogin:function(){
             document.getElementById("registerForm").style.display = 'none';
             $("#loginForm").show();
@@ -43,11 +46,41 @@ var app = new Vue({
 
         switchRegister:function(){
             document.getElementById("loginForm").style.display = 'none';
+            this.getAuthCode(1);
             $("#registerForm").show();
         },
 
+        getAuthCode:function(type){
+            let vm = this;
+            $.ajax({
+                type: 'POST',
+                url: domain + '/api/check/image-auth',
+                dataType: "json",
+                data: {
+                    type: type,
+                },
+                success: function (res) {
+                    if(res.succ == true){
+                        vm.authCodeImg = res;
+                        if(vm.authCodeImg) {
+                            document.getElementById('authImage').src = 'data:image/png;base64,' + vm.authCodeImg;
+                        }else {
+                            document.getElementById('image').style.display = "none";
+                        }
+                    }else{
+                        vm.errorNotify("验证码获取失败",res.msg);
+                    }
+                },
+                error:function (res) {
+                    vm.errorNotify("验证码获取失败",'');
+                }
+
+            });
+        },
+
+
         login:function () {
-            var vm = this;
+            let vm = this;
             let logName = $.trim(vm.loginInfo.loginName);
             let logPassword = $.trim(vm.loginInfo.password);
             if(logName == null || logName.length == 0){
@@ -92,25 +125,19 @@ var app = new Vue({
             }
 
             if(regConfirm == null || regConfirm.length == 0){
-                vm.warnMessage('抱歉, 情重复输入密码~');
-            }
-
-            if(regPassword != regConfirm){
-                vm.warnMessage('抱歉, 两次密码不一致~');
+                vm.warnMessage('抱歉, 请输入验证码~');
             }
 
             let regPasswordMd5 = md5(regPassword);
 
-            let regConfirmMd5 = md5(regConfirm);
-
             $.ajax({
                 type: 'POST',
-                url: domain + '/user/register',
+                url: domain + '/api/user/sign-in',
                 dataType: "json",
                 data: {
-                    loginName: regName,
+                    username: regName,
                     password: regPasswordMd5,
-                    confirm: regConfirmMd5,
+                    authCode: regConfirm,
                 },
                 success: function (res) {
                     if(res.succ == true){
